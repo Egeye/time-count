@@ -28,7 +28,6 @@ public class MainView extends Frame {
         // setMenuBar(menubar);
 
 
-
         setVisible(true);
 
         this.addWindowListener(new WindowAdapter() {
@@ -38,5 +37,11 @@ public class MainView extends Frame {
             }
         });
 
+    }
+
+    public static void main(String[] args) {
+        System.out.println("3 : " + "000".substring(0, 2));
+        System.out.println("2 : " + "00".substring(0, 2));
+        System.out.println("1 : " + "0".substring(1));
     }
 }
