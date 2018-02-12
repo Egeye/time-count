@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,9 +18,9 @@ public class AppMain {
     private static Timer timer = null;
 
     // 表格组件内容
-    private static String[][] datas = {};
-    private static String[] titles = {"计时时间", "上次时间", "两次差值"};
-    private static DefaultTableModel model = new DefaultTableModel(datas, titles);
+    private static String[][] tableData = {};
+    private static String[] titles = {"No.", "计时时间", "上次时间", "两次差值"};
+    private static DefaultTableModel model = new DefaultTableModel(tableData, titles);
     private static ArrayList<String> list = new ArrayList<String>();
     private static JTable table = new JTable(model);
 
@@ -74,9 +73,9 @@ public class AppMain {
 
         northPanel.add(centerPanel);
 
-        // String[][] datas = {};
+        // String[][] tableData = {};
         // String[] titles = {"计时时间", "上次时间", "两次差值"};
-        // DefaultTableModel model = new DefaultTableModel(datas, titles);
+        // DefaultTableModel model = new DefaultTableModel(tableData, titles);
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
@@ -159,6 +158,8 @@ public class AppMain {
                 // } else
                 if (ms.length() > 2) {
                     ms = ms.substring(0, 2);
+                } else if (ms.length() == 1) {
+                    ms = ("0" + ms);
                 }
 
 
@@ -174,10 +175,11 @@ public class AppMain {
         }
         // 每按一次计算，往list里面塞一个时间字符串
         list.add(val);
+        System.out.println("val : "+val);
 
         // 第一次按，所以记录时间
         if (list.size() < 2) {
-            model.addRow(new String[]{"test", "sdfsdf", list.get(0)});
+            model.addRow(new String[]{Integer.toString(list.size()), list.get(0), "0:0:0.00", list.get(0)});
         } else {
             String[] newTimeArr = list.get(list.size() - 1).split(":");
             String[] lastTimeArr = list.get(list.size() - 2).split(":");
@@ -198,15 +200,30 @@ public class AppMain {
             int mm = ((newTime - lastTime) / 60000);
             int ss = ((newTime - lastTime) / 1000);
             int ms = (newTime - lastTime) % 1000;
+            // int hh = parseInt(newTimeArr[0]) - parseInt(lastTimeArr[0]);
+            // int mm = parseInt(newTimeArr[1]) - parseInt(lastTimeArr[1]);
+            // int ss = parseInt(newSAndMS[0]) - parseInt(oldSAndMS[0]);
+            // int ms = parseInt(newSAndMS[1]) - parseInt(oldSAndMS[1]);
+            //
+            // if (ms < 0) {
+            //     String lastSAndMs = lastTimeArr[2];
+            //     String nextSAndMs = newTimeArr[2];
+            //     String x = Float.toString(Float.parseFloat(nextSAndMs) - Float.parseFloat(lastSAndMs)).substring(2, 4);
+            //     ms = parseInt(x.replace(".", ""));
+            // }
 
-            String pms = "";
+            String pms;
             if (Integer.toString(ms).length() == 1) {
                 pms = "0" + ms;
             } else {
-                pms = ms+"";
+                pms = (ms + "").substring(0, 2);
             }
             String str = hh + ":" + mm + ":" + ss + "." + pms;
-            model.addRow(new String[]{"str", "str", str});
+            model.addRow(new String[]{
+                    Integer.toString(list.size()),
+                    list.get(list.size() - 1),
+                    list.get(list.size() - 2),
+                    str});
         }
 
     }

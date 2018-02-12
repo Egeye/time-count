@@ -1,8 +1,15 @@
 package com.or.timecount.view;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainView extends Frame {
     public MainView() throws HeadlessException {
@@ -40,8 +47,60 @@ public class MainView extends Frame {
     }
 
     public static void main(String[] args) {
-        System.out.println("3 : " + "000".substring(0, 2));
-        System.out.println("2 : " + "00".substring(0, 2));
-        System.out.println("1 : " + "0".substring(1));
+        new TimerFrame().setVisible(true);
+
     }
 }
+
+class TimerFrame extends JFrame {
+
+    private long time = (long) (1.2 * 60 * 1000L);  //倒计时时间（单位毫秒）
+    private JLabel lblTime;
+    private Thread runner;
+
+    public TimerFrame() {
+        super("TimerFrame");
+        this.lblTime = new JLabel("单击开始");
+        this.lblTime.setFont(new Font("Monospaced", Font.BOLD, 60));
+        this.lblTime.setHorizontalAlignment(SwingConstants.CENTER);
+        this.lblTime.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (runner != null) runner.start();
+            }
+        });
+        this.runner = new Thread(new Runnable() {
+            public void run() {
+                Date t = new Date();
+                StringWriter sw = new StringWriter();
+                StringBuffer sb = sw.getBuffer();
+                PrintWriter pw = new PrintWriter(sw);
+                long cur = 0L, end = System.currentTimeMillis() + time;
+                while ((cur = end - System.currentTimeMillis()) > 0) {
+                    t.setTime(cur);
+                    pw.format("%1$tM:%1$tS.%tL", t);
+                    pw.flush();
+                    lblTime.setText(sb.toString());
+                    sb.setLength(0);
+                    try {
+                        Thread.sleep(6L);
+                    } catch (InterruptedException e) {
+                    }
+                }
+                lblTime.setText("00:00.000");
+                try {
+                    Thread.sleep(1200L);
+                } catch (InterruptedException e) {
+                }
+                lblTime.setText("Bomb!!!");
+            }
+        });
+        this.runner.setDaemon(true);
+        getContentPane().add(this.lblTime, BorderLayout.CENTER);
+        setResizable(false);
+        setBounds(0, 0, 460, 330);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+}
+
