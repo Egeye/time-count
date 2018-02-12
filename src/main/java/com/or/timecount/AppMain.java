@@ -7,8 +7,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static java.lang.Integer.parseInt;
 
 public class AppMain {
     // 定时器
@@ -18,6 +22,8 @@ public class AppMain {
     private static String[][] datas = {};
     private static String[] titles = {"计时时间", "上次时间", "两次差值"};
     private static DefaultTableModel model = new DefaultTableModel(datas, titles);
+    private static ArrayList<String> list = new ArrayList<String>();
+    private static JTable table = new JTable(model);
 
     // 时间标签
     private static Label labelTime = new Label("0:0:0.00");
@@ -82,7 +88,7 @@ public class AppMain {
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
         // model.addRow(new String[]{"test", "sdfsdf", "3"});
-        JTable table = new JTable(model);
+        // JTable table = new JTable(model);
 
         JScrollPane jScrollPane = new JScrollPane(table);
 
@@ -163,11 +169,54 @@ public class AppMain {
     }
 
     private static void count() {
-        model.addRow(new String[]{"test", "sdfsdf", "3"});
+        if (!isRunning) {
+            return;
+        }
+        // 每按一次计算，往list里面塞一个时间字符串
+        list.add(val);
+
+        // 第一次按，所以记录时间
+        if (list.size() < 2) {
+            model.addRow(new String[]{"test", "sdfsdf", list.get(0)});
+        } else {
+            String[] newTimeArr = list.get(list.size() - 1).split(":");
+            String[] lastTimeArr = list.get(list.size() - 2).split(":");
+
+            String[] oldSAndMS = lastTimeArr[2].split("\\.");
+            String[] newSAndMS = newTimeArr[2].split("\\.");
+
+            int lastTime = (parseInt(lastTimeArr[0]) * 3600000)
+                    + (parseInt(lastTimeArr[1]) * 60000)
+                    + (parseInt(oldSAndMS[0]) * 1000)
+                    + parseInt(oldSAndMS[1]);
+            int newTime = (parseInt(newTimeArr[0]) * 3600000)
+                    + (parseInt(newTimeArr[1]) * 60000)
+                    + (parseInt(newSAndMS[0]) * 1000)
+                    + parseInt(newSAndMS[1]);
+
+            int hh = ((newTime - lastTime) / 3600000);
+            int mm = ((newTime - lastTime) / 60000);
+            int ss = ((newTime - lastTime) / 1000);
+            int ms = (newTime - lastTime) % 1000;
+
+            String pms = "";
+            if (Integer.toString(ms).length() == 1) {
+                pms = "0" + ms;
+            } else {
+                pms = ms+"";
+            }
+            String str = hh + ":" + mm + ":" + ss + "." + pms;
+            model.addRow(new String[]{"str", "str", str});
+        }
+
     }
 
     private static void reset() {
+        if (!isRunning) {
+            return;
+        }
         isRunning = false;
+        list.clear();
         timer.cancel();
         timer = null;
         hour = 0;
