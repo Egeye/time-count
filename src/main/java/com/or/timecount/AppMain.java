@@ -19,7 +19,7 @@ public class AppMain {
 
     // 表格组件内容
     private static String[][] tableData = {};
-    private static String[] titles = {"No.", "计时时间", "两次差值"};
+    private static String[] titles = {"No.", "Time", "Count"};
     private static DefaultTableModel model = new DefaultTableModel(tableData, titles);
     private static ArrayList<String> list = new ArrayList<String>();
     private static JTable table = new JTable(model);
@@ -41,7 +41,7 @@ public class AppMain {
     public static void main(String[] args) {
         // 文字标题
         MainView demo = new MainView("");
-
+        demo.setLocationRelativeTo(null);
         // 背景颜色
         // demo.setBackground(Color.BLUE);
 
@@ -105,7 +105,6 @@ public class AppMain {
 
         // 设置可见。
         demo.setVisible(true);
-        demo.setLocationRelativeTo(null);
 
 
         btnStart.addActionListener(new ActionListener() {
@@ -175,7 +174,6 @@ public class AppMain {
         }
         // 每按一次计算，往list里面塞一个时间字符串
         list.add(val);
-        System.out.println("val : "+val);
 
         // 第一次按，所以记录时间
         if (list.size() < 2) {
