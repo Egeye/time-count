@@ -19,7 +19,7 @@ public class AppMain {
 
     // 表格组件内容
     private static String[][] tableData = {};
-    private static String[] titles = {"No.", "计时时间", "上次时间", "两次差值"};
+    private static String[] titles = {"No.", "计时时间", "两次差值"};
     private static DefaultTableModel model = new DefaultTableModel(tableData, titles);
     private static ArrayList<String> list = new ArrayList<String>();
     private static JTable table = new JTable(model);
@@ -179,7 +179,7 @@ public class AppMain {
 
         // 第一次按，所以记录时间
         if (list.size() < 2) {
-            model.addRow(new String[]{Integer.toString(list.size()), list.get(0), "0:0:0.00", list.get(0)});
+            model.addRow(new String[]{Integer.toString(list.size()), list.get(0), list.get(0)});
         } else {
             String[] newTimeArr = list.get(list.size() - 1).split(":");
             String[] lastTimeArr = list.get(list.size() - 2).split(":");
@@ -190,11 +190,11 @@ public class AppMain {
             int lastTime = (parseInt(lastTimeArr[0]) * 3600000)
                     + (parseInt(lastTimeArr[1]) * 60000)
                     + (parseInt(oldSAndMS[0]) * 1000)
-                    + parseInt(oldSAndMS[1]);
+                    + parseInt(oldSAndMS[1] + "0");
             int newTime = (parseInt(newTimeArr[0]) * 3600000)
                     + (parseInt(newTimeArr[1]) * 60000)
                     + (parseInt(newSAndMS[0]) * 1000)
-                    + parseInt(newSAndMS[1]);
+                    + parseInt(newSAndMS[1] + "0");
 
             int hh = ((newTime - lastTime) / 3600000);
             int mm = ((newTime - lastTime) / 60000);
@@ -222,7 +222,6 @@ public class AppMain {
             model.addRow(new String[]{
                     Integer.toString(list.size()),
                     list.get(list.size() - 1),
-                    list.get(list.size() - 2),
                     str});
         }
 
